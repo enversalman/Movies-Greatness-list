@@ -1,224 +1,379 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">x
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movie Rater</title>
+    <title>Movie Rater Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        :root {
-            --primary-color: #4A90E2;
-            --bg-color: #f4f7f6;
-            --card-bg: #ffffff;
-            --text-color: #333;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+        .rating-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .rating-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .star-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            gap: 4px;
+        }
+
+        .star-item {
+            flex: 1;
             display: flex;
             justify-content: center;
-            padding: 2rem;
-            margin: 0;
+            align-items: center;
         }
 
-        .container {
-            background-color: var(--card-bg);
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 500px;
-        }
-
-        h1 {
-            text-align: center;
-            color: var(--primary-color);
-            margin-top: 0;
-        }
-
-        h2 {
-            font-size: 1.2rem;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 0.5rem;
-            margin-top: 2rem;
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: bold;
-        }
-
-        input[type="text"],
-        input[type="number"] {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-            font-size: 1rem;
-        }
-
-        button {
-            width: 100%;
-            padding: 0.75rem;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 1rem;
-            font-weight: bold;
+        .star {
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            width: 100%;
+            max-width: 42px; /* Increased size */
+            aspect-ratio: 1/1;
+            color: #e2e8f0; /* slate-200 */
+            transition: transform 0.1s ease, color 0.1s ease;
         }
 
-        button:hover {
-            background-color: #357ABD;
+        .star:hover {
+            transform: scale(1.1);
         }
 
-        .error-msg {
-            color: #d9534f;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-            display: none;
+        .star.filled {
+            color: #f59e0b; /* amber-500 */
         }
 
-        ul {
-            list-style-type: none;
-            padding: 0;
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
         }
-
-        li {
-            background-color: #f9f9f9;
-            margin-bottom: 0.5rem;
-            padding: 1rem;
-            border-radius: 5px;
-            border-left: 5px solid var(--primary-color);
-            display: flex;
-            flex-direction: column;
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
         }
-
-        .rating-header {
-            font-weight: bold;
-            font-size: 1.1rem;
-            margin-bottom: 0.25rem;
-        }
-
-        .rating-details {
-            font-size: 0.9rem;
-            color: #666;
-        }
-
-        .score {
-            color: var(--primary-color);
-            font-weight: bold;
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
         }
     </style>
 </head>
-<body>
+<body class="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md mx-auto">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-extrabold text-slate-900 tracking-tight mb-2">🎬 Movie Rater</h1>
+            <p class="text-slate-500">Keep track of your cinematic journey.</p>
+        </div>
 
-<div class="container">
-    <h1>🎬 Movie Rater</h1>
-    
-    <div class="form-group">
-        <label for="reviewerName">Your Name</label>
-        <input type="text" id="reviewerName" placeholder="e.g. John Doe">
+        <!-- Input Form -->
+        <div class="bg-white rounded-3xl shadow-xl border border-slate-200 p-8 mb-8">
+            <h2 id="formTitle" class="text-xl font-bold text-slate-800 mb-6 text-center">Add New Rating</h2>
+            
+            <div class="space-y-5">
+                <div class="grid grid-cols-1 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 px-1">Your Name</label>
+                        <input type="text" id="reviewerName" class="enter-listener w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-slate-50" placeholder="Enter your name">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 px-1">Movie Title</label>
+                        <input type="text" id="movieName" class="enter-listener w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-slate-50" placeholder="e.g. Inception">
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <div class="flex justify-between items-end mb-3 px-1">
+                        <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Rating</label>
+                        <span id="ratingDisplay" class="text-3xl font-black text-blue-600">5.0</span>
+                    </div>
+                    <div class="star-container bg-slate-50 p-4 rounded-2xl border border-slate-100" id="starWrapper">
+                        <!-- 10 Stars generated by JS -->
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-3 pt-4">
+                    <button onclick="handleSave()" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-blue-200 active:transform active:scale-[0.98]">
+                        Save Rating
+                    </button>
+                    <button onclick="resetForm()" id="cancelBtn" class="hidden w-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-3 rounded-2xl transition-colors">
+                        Cancel Edit
+                    </button>
+                </div>
+            </div>
+            <p class="text-[10px] text-slate-300 mt-6 text-center font-medium">Tip: Press Enter in text fields to save quickly</p>
+        </div>
+
+        <!-- Filter/Search -->
+        <div class="relative mb-6">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            </span>
+            <input type="text" id="searchBar" oninput="renderRatings()" placeholder="Search movies or reviewers..." class="w-full pl-10 pr-4 py-3 bg-white rounded-2xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500 outline-none shadow-sm">
+        </div>
+
+        <!-- Ratings List -->
+        <div id="ratingsContainer" class="space-y-4 pb-12">
+            <!-- Items injected here -->
+        </div>
     </div>
 
-    <div class="form-group">
-        <label for="movieName">Movie Name</label>
-        <input type="text" id="movieName" placeholder="e.g. The Matrix">
+    <!-- Custom Modal for Confirmation -->
+    <div id="modalOverlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl">
+            <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mb-6 mx-auto">
+                <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            </div>
+            <h3 class="text-2xl font-bold text-slate-900 mb-2 text-center">Delete Rating?</h3>
+            <p class="text-slate-500 mb-8 text-center">Are you sure you want to remove this memory from your list?</p>
+            <div class="flex flex-col gap-3">
+                <button id="confirmDeleteBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl transition-colors">Yes, Delete</button>
+                <button onclick="closeModal()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-3 rounded-xl transition-colors">Cancel</button>
+            </div>
+        </div>
     </div>
 
-    <div class="form-group">
-        <label for="movieRating">Rating (out of 10)</label>
-        <input type="number" id="movieRating" min="1" max="10" placeholder="1 - 10">
-    </div>
+    <script>
+        let ratings = JSON.parse(localStorage.getItem('movie_ratings_v1')) || [];
+        let editId = null;
+        let deleteIdBuffer = null;
+        let currentSelectedScore = 5.0;
+        let hoveredScore = null;
 
-    <div id="errorMsg" class="error-msg">Please fill out all fields correctly!</div>
+        const nameInput = document.getElementById('reviewerName');
+        const movieInput = document.getElementById('movieName');
+        const ratingDisplay = document.getElementById('ratingDisplay');
+        const searchBar = document.getElementById('searchBar');
+        const submitBtn = document.getElementById('submitBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const formTitle = document.getElementById('formTitle');
+        const starWrapper = document.getElementById('starWrapper');
 
-    <button onclick="saveRating()">Save Rating</button>
-
-    <h2>Saved Ratings</h2>
-    <ul id="ratingsList">
-        </ul>
-</div>
-
-<script>
-    // Load existing ratings when the page opens
-    document.addEventListener("DOMContentLoaded", displayRatings);
-
-    function saveRating() {
-        // Get values from the inputs
-        const nameInput = document.getElementById('reviewerName').value.trim();
-        const movieInput = document.getElementById('movieName').value.trim();
-        const ratingInput = document.getElementById('movieRating').value;
-        const errorMsg = document.getElementById('errorMsg');
-
-        // Basic validation
-        if (!nameInput || !movieInput || !ratingInput || ratingInput < 1 || ratingInput > 10) {
-            errorMsg.style.display = 'block';
-            return;
-        }
-
-        // Hide error message if validation passes
-        errorMsg.style.display = 'none';
-
-        // Create a rating object
-        const newRating = {
-            name: nameInput,
-            movie: movieInput,
-            score: ratingInput,
-            date: new Date().toLocaleDateString()
+        const getStarSVG = (type) => {
+            if (type === 'half') {
+                return `
+                <svg viewBox="0 0 24 24" fill="currentColor" class="star filled">
+                    <defs>
+                        <linearGradient id="halfGrad">
+                            <stop offset="50%" stop-color="currentColor"/>
+                            <stop offset="50%" stop-color="#e2e8f0" stop-opacity="1"/>
+                        </linearGradient>
+                    </defs>
+                    <path fill="url(#halfGrad)" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                </svg>`;
+            }
+            return `<svg viewBox="0 0 24 24" fill="currentColor" class="star ${type === 'full' ? 'filled' : ''}"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>`;
         };
 
-        // Fetch existing ratings from LocalStorage, or start an empty array
-        let ratings = JSON.parse(localStorage.getItem('savedMovieRatings')) || [];
-        
-        // Add the new rating to the array
-        ratings.push(newRating);
-        
-        // Save back to LocalStorage
-        localStorage.setItem('savedMovieRatings', JSON.stringify(ratings));
+        function initStars() {
+            starWrapper.innerHTML = '';
+            for (let i = 1; i <= 10; i++) {
+                const starDiv = document.createElement('div');
+                starDiv.className = 'star-item';
+                starDiv.dataset.index = i;
+                starDiv.innerHTML = getStarSVG('empty');
+                
+                starDiv.addEventListener('mousemove', (e) => {
+                    const rect = starDiv.getBoundingClientRect();
+                    const isLeftHalf = (e.clientX - rect.left) < (rect.width / 2);
+                    hoveredScore = isLeftHalf ? i - 0.5 : i;
+                    updateStarUI(hoveredScore);
+                });
 
-        // Clear the movie and rating inputs (leave the name for convenience)
-        document.getElementById('movieName').value = '';
-        document.getElementById('movieRating').value = '';
+                starDiv.addEventListener('mouseleave', () => {
+                    hoveredScore = null;
+                    updateStarUI(currentSelectedScore);
+                });
 
-        // Update the display
-        displayRatings();
-    }
+                starDiv.addEventListener('click', () => {
+                    currentSelectedScore = hoveredScore;
+                    ratingDisplay.innerText = currentSelectedScore.toFixed(1);
+                    updateStarUI(currentSelectedScore);
+                });
 
-    function displayRatings() {
-        const ratingsList = document.getElementById('ratingsList');
-        ratingsList.innerHTML = ''; // Clear current list
-
-        const ratings = JSON.parse(localStorage.getItem('savedMovieRatings')) || [];
-
-        if (ratings.length === 0) {
-            ratingsList.innerHTML = '<li><div class="rating-details">No ratings yet. Be the first!</div></li>';
-            return;
+                starWrapper.appendChild(starDiv);
+            }
+            updateStarUI(currentSelectedScore);
         }
 
-        // Loop through ratings backwards to show the newest first
-        for (let i = ratings.length - 1; i >= 0; i--) {
-            const r = ratings[i];
-            
-            const li = document.createElement('li');
-            li.innerHTML = `
-                <div class="rating-header">${r.movie} - <span class="score">${r.score}/10</span></div>
-                <div class="rating-details">Reviewed by ${r.name} on ${r.date}</div>
-            `;
-            
-            ratingsList.appendChild(li);
+        function updateStarUI(score) {
+            const starItems = starWrapper.querySelectorAll('.star-item');
+            starItems.forEach((item, idx) => {
+                const starIndex = idx + 1;
+                if (score >= starIndex) {
+                    item.innerHTML = getStarSVG('full');
+                } else if (score === starIndex - 0.5) {
+                    item.innerHTML = getStarSVG('half');
+                } else {
+                    item.innerHTML = getStarSVG('empty');
+                }
+            });
+            ratingDisplay.innerText = score.toFixed(1);
         }
-    }
-</script>
 
+        document.querySelectorAll('.enter-listener').forEach(input => {
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleSave();
+            });
+        });
+
+        function handleSave() {
+            const name = nameInput.value.trim();
+            const movie = movieInput.value.trim();
+            const score = currentSelectedScore;
+
+            if (!name || !movie) {
+                showToast("Name and movie title are required", "error");
+                return;
+            }
+
+            if (editId) {
+                const index = ratings.findIndex(r => r.id === editId);
+                ratings[index] = { ...ratings[index], name, movie, score };
+                showToast("Rating updated!");
+            } else {
+                const newRating = {
+                    id: Date.now(),
+                    name,
+                    movie,
+                    score,
+                    timestamp: new Date().toISOString()
+                };
+                ratings.unshift(newRating);
+                showToast("Rating saved!");
+            }
+
+            saveToStorage();
+            resetForm();
+            renderRatings();
+            document.activeElement.blur();
+        }
+
+        function resetForm() {
+            editId = null;
+            movieInput.value = '';
+            currentSelectedScore = 5.0;
+            updateStarUI(currentSelectedScore);
+            formTitle.innerText = "Add New Rating";
+            submitBtn.innerText = "Save Rating";
+            submitBtn.classList.replace('bg-orange-500', 'bg-blue-600');
+            cancelBtn.classList.add('hidden');
+        }
+
+        function startEdit(id) {
+            const item = ratings.find(r => r.id === id);
+            if (!item) return;
+
+            editId = id;
+            nameInput.value = item.name;
+            movieInput.value = item.movie;
+            currentSelectedScore = parseFloat(item.score);
+            updateStarUI(currentSelectedScore);
+
+            formTitle.innerText = "Edit Rating";
+            submitBtn.innerText = "Update Rating";
+            submitBtn.classList.replace('bg-blue-600', 'bg-orange-500');
+            cancelBtn.classList.remove('hidden');
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            movieInput.focus();
+        }
+
+        function confirmDelete(id) {
+            deleteIdBuffer = id;
+            document.getElementById('modalOverlay').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.add('hidden');
+            deleteIdBuffer = null;
+        }
+
+        document.getElementById('confirmDeleteBtn').onclick = () => {
+            if (deleteIdBuffer) {
+                ratings = ratings.filter(r => r.id !== deleteIdBuffer);
+                saveToStorage();
+                renderRatings();
+                closeModal();
+                showToast("Rating deleted", "info");
+            }
+        };
+
+        function saveToStorage() {
+            localStorage.setItem('movie_ratings_v1', JSON.stringify(ratings));
+        }
+
+        function renderRatings() {
+            const container = document.getElementById('ratingsContainer');
+            const term = searchBar.value.toLowerCase();
+            
+            const filtered = ratings.filter(r => 
+                r.movie.toLowerCase().includes(term) || 
+                r.name.toLowerCase().includes(term)
+            );
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-20 text-slate-400">
+                        <p class="text-7xl mb-6">🎞️</p>
+                        <p class="text-lg font-medium">No movies rated yet</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filtered.map(r => `
+                <div class="rating-card bg-white p-6 rounded-3xl border border-slate-200 flex justify-between items-center shadow-sm">
+                    <div class="flex-1 overflow-hidden">
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="text-sm font-black bg-blue-100 text-blue-700 px-3 py-1 rounded-full">
+                                ${parseFloat(r.score).toFixed(1)}
+                            </span>
+                            <h3 class="font-bold text-slate-800 text-lg truncate">${r.movie}</h3>
+                        </div>
+                        <div class="flex items-center gap-2 text-slate-400 text-sm">
+                            <span class="font-semibold text-slate-500">${r.name}</span>
+                            <span>•</span>
+                            <span>${new Date(r.timestamp).toLocaleDateString()}</span>
+                        </div>
+                    </div>
+                    <div class="flex space-x-1 ml-4">
+                        <button onclick="startEdit(${r.id})" class="w-10 h-10 flex items-center justify-center hover:bg-orange-50 text-orange-500 rounded-xl transition-colors">
+                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                        </button>
+                        <button onclick="confirmDelete(${r.id})" class="w-10 h-10 flex items-center justify-center hover:bg-red-50 text-red-500 rounded-xl transition-colors">
+                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showToast(message, type = "success") {
+            const toast = document.createElement('div');
+            toast.className = `fixed bottom-6 left-1/2 -translate-x-1/2 px-8 py-4 rounded-2xl text-white font-bold shadow-2xl transition-all duration-300 z-[100] ${
+                type === 'error' ? 'bg-red-600' : type === 'info' ? 'bg-slate-800' : 'bg-green-600'
+            }`;
+            toast.innerText = message;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translate(-50%, 20px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 2500);
+        }
+
+        initStars();
+        renderRatings();
+    </script>
 </body>
 </html>
