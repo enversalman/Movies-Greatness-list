@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Rater</title>
+    <style>
+        :root {
+            --primary-color: #4A90E2;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            padding: 2rem;
+            margin: 0;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-top: 0;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 0.5rem;
+            margin-top: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+
+        button {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #357ABD;
+        }
+
+        .error-msg {
+            color: #d9534f;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #f9f9f9;
+            margin-bottom: 0.5rem;
+            padding: 1rem;
+            border-radius: 5px;
+            border-left: 5px solid var(--primary-color);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .rating-header {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .rating-details {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .score {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🎬 Movie Rater</h1>
+    
+    <div class="form-group">
+        <label for="reviewerName">Your Name</label>
+        <input type="text" id="reviewerName" placeholder="e.g. John Doe">
+    </div>
+
+    <div class="form-group">
+        <label for="movieName">Movie Name</label>
+        <input type="text" id="movieName" placeholder="e.g. The Matrix">
+    </div>
+
+    <div class="form-group">
+        <label for="movieRating">Rating (out of 10)</label>
+        <input type="number" id="movieRating" min="1" max="10" placeholder="1 - 10">
+    </div>
+
+    <div id="errorMsg" class="error-msg">Please fill out all fields correctly!</div>
+
+    <button onclick="saveRating()">Save Rating</button>
+
+    <h2>Saved Ratings</h2>
+    <ul id="ratingsList">
+        </ul>
+</div>
+
+<script>
+    // Load existing ratings when the page opens
+    document.addEventListener("DOMContentLoaded", displayRatings);
+
+    function saveRating() {
+        // Get values from the inputs
+        const nameInput = document.getElementById('reviewerName').value.trim();
+        const movieInput = document.getElementById('movieName').value.trim();
+        const ratingInput = document.getElementById('movieRating').value;
+        const errorMsg = document.getElementById('errorMsg');
+
+        // Basic validation
+        if (!nameInput || !movieInput || !ratingInput || ratingInput < 1 || ratingInput > 10) {
+            errorMsg.style.display = 'block';
+            return;
+        }
+
+        // Hide error message if validation passes
+        errorMsg.style.display = 'none';
+
+        // Create a rating object
+        const newRating = {
+            name: nameInput,
+            movie: movieInput,
+            score: ratingInput,
+            date: new Date().toLocaleDateString()
+        };
+
+        // Fetch existing ratings from LocalStorage, or start an empty array
+        let ratings = JSON.parse(localStorage.getItem('savedMovieRatings')) || [];
+        
+        // Add the new rating to the array
+        ratings.push(newRating);
+        
+        // Save back to LocalStorage
+        localStorage.setItem('savedMovieRatings', JSON.stringify(ratings));
+
+        // Clear the movie and rating inputs (leave the name for convenience)
+        document.getElementById('movieName').value = '';
+        document.getElementById('movieRating').value = '';
+
+        // Update the display
+        displayRatings();
+    }
+
+    function displayRatings() {
+        const ratingsList = document.getElementById('ratingsList');
+        ratingsList.innerHTML = ''; // Clear current list
+
+        const ratings = JSON.parse(localStorage.getItem('savedMovieRatings')) || [];
+
+        if (ratings.length === 0) {
+            ratingsList.innerHTML = '<li><div class="rating-details">No ratings yet. Be the first!</div></li>';
+            return;
+        }
+
+        // Loop through ratings backwards to show the newest first
+        for (let i = ratings.length - 1; i >= 0; i--) {
+            const r = ratings[i];
+            
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <div class="rating-header">${r.movie} - <span class="score">${r.score}/10</span></div>
+                <div class="rating-details">Reviewed by ${r.name} on ${r.date}</div>
+            `;
+            
+            ratingsList.appendChild(li);
+        }
+    }
+</script>
+
+</body>
+</html>
