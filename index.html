@@ -5,6 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movie Rater Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDEfLqSJfIyRMEajRsQikx7qJNJ6NG2YYM",
+            authDomain: "movie-rater-93301.firebaseapp.com",
+            projectId: "movie-rater-93301",
+            storageBucket: "movie-rater-93301.firebasestorage.app",
+            messagingSenderId: "425789438053",
+            appId: "1:425789438053:web:198b92da7898f1337c2e8c"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Make db and Firebase functions globally available
+        window.db = db;
+        window.firebaseCollections = {
+            addDoc, getDocs, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy, collection
+        };
+    </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
         
@@ -143,11 +168,14 @@
     </div>
 
     <script>
-        let ratings = JSON.parse(localStorage.getItem('movie_ratings_v1')) || [];
+        let ratings = [];
         let editId = null;
         let deleteIdBuffer = null;
         let currentSelectedScore = 5.0;
         let hoveredScore = null;
+
+        // Initialize Firebase listener after a short delay to ensure Firebase is loaded
+        setTimeout(initFirebaseListener, 100);
 
         const nameInput = document.getElementById('reviewerName');
         const movieInput = document.getElementById('movieName');
@@ -236,25 +264,44 @@
                 return;
             }
 
-            if (editId) {
-                const index = ratings.findIndex(r => r.id === editId);
-                ratings[index] = { ...ratings[index], name, movie, score };
-                showToast("Rating updated!");
-            } else {
-                const newRating = {
-                    id: Date.now(),
-                    name,
-                    movie,
-                    score,
-                    timestamp: new Date().toISOString()
-                };
-                ratings.unshift(newRating);
-                showToast("Rating saved!");
+            const { db, firebaseCollections } = window;
+            if (!db) {
+                showToast("Firebase not connected. Please refresh the page.", "error");
+                return;
             }
 
-            saveToStorage();
+            const { addDoc, updateDoc, doc, collection } = firebaseCollections;
+
+            if (editId) {
+                // Update existing rating
+                try {
+                    updateDoc(doc(db, 'ratings', editId), {
+                        name,
+                        movie,
+                        score
+                    });
+                    showToast("Rating updated!");
+                } catch (error) {
+                    console.error("Error updating rating:", error);
+                    showToast("Failed to update rating", "error");
+                }
+            } else {
+                // Add new rating
+                try {
+                    addDoc(collection(db, 'ratings'), {
+                        name,
+                        movie,
+                        score,
+                        timestamp: new Date().toISOString()
+                    });
+                    showToast("Rating saved!");
+                } catch (error) {
+                    console.error("Error saving rating:", error);
+                    showToast("Failed to save rating", "error");
+                }
+            }
+
             resetForm();
-            renderRatings();
             document.activeElement.blur();
         }
 
@@ -300,16 +347,54 @@
 
         document.getElementById('confirmDeleteBtn').onclick = () => {
             if (deleteIdBuffer) {
-                ratings = ratings.filter(r => r.id !== deleteIdBuffer);
-                saveToStorage();
-                renderRatings();
-                closeModal();
-                showToast("Rating deleted", "info");
+                const { db, firebaseCollections } = window;
+                if (!db) {
+                    showToast("Firebase not connected", "error");
+                    return;
+                }
+
+                const { deleteDoc, doc } = firebaseCollections;
+
+                try {
+                    deleteDoc(doc(db, 'ratings', deleteIdBuffer));
+                    showToast("Rating deleted", "info");
+                    closeModal();
+                } catch (error) {
+                    console.error("Error deleting rating:", error);
+                    showToast("Failed to delete rating", "error");
+                }
             }
         };
 
         function saveToStorage() {
-            localStorage.setItem('movie_ratings_v1', JSON.stringify(ratings));
+            // Firebase saves are handled automatically in handleSave and confirmDelete
+        }
+
+        async function initFirebaseListener() {
+            const { db, firebaseCollections } = window;
+            if (!db) return;
+            
+            const { collection, query, orderBy, onSnapshot } = firebaseCollections;
+            
+            try {
+                const q = query(collection(db, 'ratings'), orderBy('timestamp', 'desc'));
+                
+                onSnapshot(q, (snapshot) => {
+                    ratings = [];
+                    snapshot.forEach((doc) => {
+                        ratings.push({
+                            id: doc.id,
+                            ...doc.data()
+                        });
+                    });
+                    renderRatings();
+                }, (error) => {
+                    console.error("Error loading ratings:", error);
+                    showToast("Unable to load ratings. Using local cache.", "error");
+                });
+            } catch (error) {
+                console.error("Firebase initialization error:", error);
+            }
         }
 
         function renderRatings() {
