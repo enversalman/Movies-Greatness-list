@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,12 +13,12 @@
 
         // Firebase configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyDEfLqSJfIyRMEajRsQikx7qJNJ6NG2YYM",
-            authDomain: "movie-rater-93301.firebaseapp.com",
-            projectId: "movie-rater-93301",
-            storageBucket: "movie-rater-93301.firebasestorage.app",
-            messagingSenderId: "425789438053",
-            appId: "1:425789438053:web:198b92da7898f1337c2e8c"
+            apiKey: "AIzaSyBt-DFSsidGu64kEq4hY-bCgwxen78vNQU",
+            authDomain: "movie-rater-98e01.firebaseapp.com",
+            projectId: "movie-rater-98e01",
+            storageBucket: "movie-rater-98e01.firebasestorage.app",
+            messagingSenderId: "446403701209",
+            appId: "1:446403701209:web:4416196814880b457d91c8"
         };
 
         // Initialize Firebase
@@ -32,7 +33,7 @@
     </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-        
+
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f8fafc;
@@ -64,9 +65,11 @@
         .star {
             cursor: pointer;
             width: 100%;
-            max-width: 42px; /* Increased size */
+            max-width: 42px;
+            /* Increased size */
             aspect-ratio: 1/1;
-            color: #e2e8f0; /* slate-200 */
+            color: #e2e8f0;
+            /* slate-200 */
             transition: transform 0.1s ease, color 0.1s ease;
         }
 
@@ -75,22 +78,26 @@
         }
 
         .star.filled {
-            color: #f59e0b; /* amber-500 */
+            color: #f59e0b;
+            /* amber-500 */
         }
 
         /* Custom scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
         }
+
         ::-webkit-scrollbar-track {
             background: #f1f1f1;
         }
+
         ::-webkit-scrollbar-thumb {
             background: #cbd5e1;
             border-radius: 4px;
         }
     </style>
 </head>
+
 <body class="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
     <div class="max-w-md mx-auto">
         <!-- Header -->
@@ -102,17 +109,23 @@
         <!-- Input Form -->
         <div class="bg-white rounded-3xl shadow-xl border border-slate-200 p-8 mb-8">
             <h2 id="formTitle" class="text-xl font-bold text-slate-800 mb-6 text-center">Add New Rating</h2>
-            
+
             <div class="space-y-5">
                 <div class="grid grid-cols-1 gap-4">
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 px-1">Your Name</label>
-                        <input type="text" id="reviewerName" class="enter-listener w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-slate-50" placeholder="Enter your name">
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 px-1">Your
+                            Name</label>
+                        <input type="text" id="reviewerName"
+                            class="enter-listener w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-slate-50"
+                            placeholder="Enter your name">
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 px-1">Movie Title</label>
-                        <input type="text" id="movieName" class="enter-listener w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-slate-50" placeholder="e.g. Inception">
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 px-1">Movie
+                            Title</label>
+                        <input type="text" id="movieName"
+                            class="enter-listener w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-slate-50"
+                            placeholder="e.g. Inception">
                     </div>
                 </div>
 
@@ -127,23 +140,30 @@
                 </div>
 
                 <div class="flex flex-col gap-3 pt-4">
-                    <button onclick="handleSave()" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-blue-200 active:transform active:scale-[0.98]">
+                    <button onclick="handleSave()" id="submitBtn"
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-blue-200 active:transform active:scale-[0.98]">
                         Save Rating
                     </button>
-                    <button onclick="resetForm()" id="cancelBtn" class="hidden w-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-3 rounded-2xl transition-colors">
+                    <button onclick="resetForm()" id="cancelBtn"
+                        class="hidden w-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-3 rounded-2xl transition-colors">
                         Cancel Edit
                     </button>
                 </div>
             </div>
-            <p class="text-[10px] text-slate-300 mt-6 text-center font-medium">Tip: Press Enter in text fields to save quickly</p>
+            <p class="text-[10px] text-slate-300 mt-6 text-center font-medium">Tip: Press Enter in text fields to save
+                quickly</p>
         </div>
 
         <!-- Filter/Search -->
         <div class="relative mb-6">
             <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
-                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
             </span>
-            <input type="text" id="searchBar" oninput="renderRatings()" placeholder="Search movies or reviewers..." class="w-full pl-10 pr-4 py-3 bg-white rounded-2xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500 outline-none shadow-sm">
+            <input type="text" id="searchBar" oninput="renderRatings()" placeholder="Search movies or reviewers..."
+                class="w-full pl-10 pr-4 py-3 bg-white rounded-2xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500 outline-none shadow-sm">
         </div>
 
         <!-- Ratings List -->
@@ -153,16 +173,23 @@
     </div>
 
     <!-- Custom Modal for Confirmation -->
-    <div id="modalOverlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+    <div id="modalOverlay"
+        class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl">
             <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mb-6 mx-auto">
-                <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
             </div>
             <h3 class="text-2xl font-bold text-slate-900 mb-2 text-center">Delete Rating?</h3>
             <p class="text-slate-500 mb-8 text-center">Are you sure you want to remove this memory from your list?</p>
             <div class="flex flex-col gap-3">
-                <button id="confirmDeleteBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl transition-colors">Yes, Delete</button>
-                <button onclick="closeModal()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-3 rounded-xl transition-colors">Cancel</button>
+                <button id="confirmDeleteBtn"
+                    class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl transition-colors">Yes,
+                    Delete</button>
+                <button onclick="closeModal()"
+                    class="w-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-3 rounded-xl transition-colors">Cancel</button>
             </div>
         </div>
     </div>
@@ -209,7 +236,7 @@
                 starDiv.className = 'star-item';
                 starDiv.dataset.index = i;
                 starDiv.innerHTML = getStarSVG('empty');
-                
+
                 starDiv.addEventListener('mousemove', (e) => {
                     const rect = starDiv.getBoundingClientRect();
                     const isLeftHalf = (e.clientX - rect.left) < (rect.width / 2);
@@ -330,7 +357,7 @@
             submitBtn.innerText = "Update Rating";
             submitBtn.classList.replace('bg-blue-600', 'bg-orange-500');
             cancelBtn.classList.remove('hidden');
-            
+
             window.scrollTo({ top: 0, behavior: 'smooth' });
             movieInput.focus();
         }
@@ -372,13 +399,16 @@
 
         async function initFirebaseListener() {
             const { db, firebaseCollections } = window;
-            if (!db) return;
-            
+            if (!db) {
+                setTimeout(initFirebaseListener, 100);
+                return;
+            }
+
             const { collection, query, orderBy, onSnapshot } = firebaseCollections;
-            
+
             try {
                 const q = query(collection(db, 'ratings'), orderBy('timestamp', 'desc'));
-                
+
                 onSnapshot(q, (snapshot) => {
                     ratings = [];
                     snapshot.forEach((doc) => {
@@ -400,9 +430,9 @@
         function renderRatings() {
             const container = document.getElementById('ratingsContainer');
             const term = searchBar.value.toLowerCase();
-            
-            const filtered = ratings.filter(r => 
-                r.movie.toLowerCase().includes(term) || 
+
+            const filtered = ratings.filter(r =>
+                r.movie.toLowerCase().includes(term) ||
                 r.name.toLowerCase().includes(term)
             );
 
@@ -445,9 +475,8 @@
 
         function showToast(message, type = "success") {
             const toast = document.createElement('div');
-            toast.className = `fixed bottom-6 left-1/2 -translate-x-1/2 px-8 py-4 rounded-2xl text-white font-bold shadow-2xl transition-all duration-300 z-[100] ${
-                type === 'error' ? 'bg-red-600' : type === 'info' ? 'bg-slate-800' : 'bg-green-600'
-            }`;
+            toast.className = `fixed bottom-6 left-1/2 -translate-x-1/2 px-8 py-4 rounded-2xl text-white font-bold shadow-2xl transition-all duration-300 z-[100] ${type === 'error' ? 'bg-red-600' : type === 'info' ? 'bg-slate-800' : 'bg-green-600'
+                }`;
             toast.innerText = message;
             document.body.appendChild(toast);
             setTimeout(() => {
@@ -461,4 +490,5 @@
         renderRatings();
     </script>
 </body>
+
 </html>
